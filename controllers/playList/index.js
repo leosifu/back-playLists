@@ -8,7 +8,7 @@ const {PlayList} = require('../../models/playList');
 
 module.exports = {
   prueba(req, res, next) {
-    console.log('wiii');
+    console.log('aca esta prueba...');
     return 0;
   },
   async getAllPlayList(req, res, next) {
@@ -75,18 +75,30 @@ module.exports = {
       console.log(e);
     }
   },
-  async changeSong(req, res, next) {
+  async changeSong(nextSong, playListId) {
     try {
-      const {id} = req.params;
-      const updatedPlayList = await PlayList.findOneAndUpdate(
-        {
-          _id: id,
-        },
-        {
-          currentSongPosition
-        }
-      )
-
+      // const updatedPlayList = await PlayList.findOneAndUpdate(
+      //   {
+      //     _id: playListId,
+      //   },
+      //   {
+      //     currentSongPosition: nextSong
+      //   },
+      //   {
+      //     new: true
+      //   }
+      // ).populate('songs');
+      // console.log('playList actualizada', updatedPlayList);
+      const playListFind = await PlayList.findById(playListId).populate('songs');
+      if (playListFind.songs.length === nextSong) {
+        playListFind.currentSongPosition = 0;
+      }
+      else {
+        playListFind.currentSongPosition = nextSong;
+      }
+      await playListFind.save();
+      // console.log('playList encontrada', playListFind);
+      return playListFind;
 
     } catch (e) {
       console.log(e);

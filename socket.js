@@ -1,8 +1,25 @@
 const PlayListController = require('./controllers/playList');
 
+const SongController = require('./controllers/song');
+
 exports = module.exports = function(io){
   io.on('connection', (socket) => {
     console.log(`New connection, ${socket.id}`);
+
+    socket.on('saveSongToPlaylist', async (song, playListId) => {
+      const findPlayList = await SongController.addSongToPlayList(song, playListId);
+      io.emit('playList-updated', findPlayList);
+    })
+
+    socket.on('changeCurrentSongPlaylist', async (nextSong, playListId) => {
+      const updatedPlayList = await PlayListController.changeSong(nextSong, playListId);
+      io.emit('playList-updated', updatedPlayList);
+    })
+
+    socket.on('deleteSongFromPlayList', async (songId, playListId) => {
+      const updatedPlayList = await PlayListController.deleteSongFromPlayList(songId, playListId);
+      io.emit('playList-updated', updatedPlayList);
+    })
 
     socket.on('get-playlist', (message) => {
       console.log(`message from ${socket.id} : ${message}`);
