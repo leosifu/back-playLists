@@ -77,18 +77,6 @@ module.exports = {
   },
   async changeSong(nextSong, playListId) {
     try {
-      // const updatedPlayList = await PlayList.findOneAndUpdate(
-      //   {
-      //     _id: playListId,
-      //   },
-      //   {
-      //     currentSongPosition: nextSong
-      //   },
-      //   {
-      //     new: true
-      //   }
-      // ).populate('songs');
-      // console.log('playList actualizada', updatedPlayList);
       const playListFind = await PlayList.findById(playListId).populate('songs');
       if (playListFind.songs.length === nextSong) {
         playListFind.currentSongPosition = 0;
@@ -97,9 +85,19 @@ module.exports = {
         playListFind.currentSongPosition = nextSong;
       }
       await playListFind.save();
-      // console.log('playList encontrada', playListFind);
       return playListFind;
 
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async deleteSongFromPlayList(songId, playListId) {
+    try {
+      const playListFind = await PlayList.findById(playListId).populate('songs');
+      playListFind.songs.pull({ _id: songId });
+      playListFind.songsOrder.pull({ _id: songId });
+      playListFind.save();
+      return playListFind;
     } catch (e) {
       console.log(e);
     }
