@@ -5,11 +5,11 @@ module.exports = {
   async addSongToPlayList(song, playListId) {
     try {
       const data = {
-        url: song.id.videoId,
-        songName: song.snippet.title,
+        url: song.url,
+        songName: song.songName,
         provider: song.provider,
         position: 0,
-        image: song.snippet.thumbnails.medium.url
+        image: song.image
       }
       const findPlayList = await PlayList.findById(playListId).populate('songs');
       const playListSongs = findPlayList.songs;
