@@ -101,5 +101,23 @@ module.exports = {
     } catch (e) {
       console.log(e);
     }
+  },
+  async changeSongPositionInPlaylist(id, playListId, toIndex, currentIndex) {
+    try {
+      const playListFind = await PlayList.findById(playListId).populate('songs');
+
+      const songsOrderCopy = [...playListFind.songsOrder];
+      songsOrderCopy.splice(toIndex, 0, songsOrderCopy.splice(currentIndex, 1)[0]);
+      playListFind.songsOrder = songsOrderCopy;
+
+      const songsCopy = [...playListFind.songs];
+      songsCopy.splice(toIndex, 0, songsCopy.splice(currentIndex, 1)[0]);
+      playListFind.songs = songsCopy;
+
+      playListFind.save();
+      return playListFind;
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

@@ -21,6 +21,12 @@ exports = module.exports = function(io){
       io.emit('playList-updated', updatedPlayList);
     })
 
+    socket.on('moveSongInPlaylist', async (songId, playListId, toIndex, currentIndex) => {
+      const updatedPlayList = await PlayListController.changeSongPositionInPlaylist(songId, playListId, toIndex, currentIndex);
+      // console.log(updatedPlayList.songsOrder);
+      io.emit('playList-updated', updatedPlayList);
+    })
+
     socket.on('get-playlist', (message) => {
       console.log(`message from ${socket.id} : ${message}`);
     })
